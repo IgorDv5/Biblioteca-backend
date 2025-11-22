@@ -8,6 +8,12 @@ Usuario que pega emprestado perde 10 pontos; ganha 15 ao devolver
 */
 
 
+function calcularMediaEstrelas(array) {
+  if (!array || array.length === 0) return 5;
+  const soma = array.reduce((acc, val) => acc + val, 0);
+  return Math.round((soma / array.length) * 10) / 10; 
+}
+
 
 exports.listar = async (req, res) => {
   try {
@@ -133,28 +139,42 @@ exports.emprestar = async (req, res) => {
 exports.devolver = async (req, res) => {
   try {
     const { id } = req.params;
+    const { estrelas } = req.body;
+
+    if (estrelas === undefined) {
+      return res.status(400).json({ erro: "Avaliação (estrelas) obrigatória ao devolver o livro" });
+    }
+
+    if (estrelas < 1 || estrelas > 5) {
+      return res.status(400).json({ erro: "Estrelas devem estar entre 1 e 5" });
+    }
 
     const livro = await Livro.findById(id);
     if (!livro) return res.status(404).json({ erro: "Livro não encontrado" });
 
-    if (livro.status !== "emprestado")
+    if (livro.status !== "emprestado") {
       return res.status(400).json({ erro: "Livro não está emprestado" });
+    }
 
     const pegador = await User.findById(livro.emprestadoPara);
-
     const hoje = new Date();
 
     if (pegador) {
-      // Quem devolve ganha pontos
-      pegador.pontos = (pegador.pontos || 0) + 15; //pegador ganha 15 pontos ao devolver
+      // Quem devolve ganha 15 pontos
+      pegador.pontos = (pegador.pontos || 0) + 15;
 
-      // Perde reputação se atrasar devolucao
+      // Perde reputação se atrasar
       if (livro.dataDevolucaoPrevista && hoje > new Date(livro.dataDevolucaoPrevista)) {
         pegador.reputacao = Math.max((pegador.reputacao || 100) - 10, 0);
       }
 
       await pegador.save();
     }
+
+    // Atualizando média de estrelas
+    livro.qtdAvaliacoes = livro.qtdAvaliacoes || 0;
+    livro.estrelas = ((livro.estrelas * livro.qtdAvaliacoes) + estrelas) / (livro.qtdAvaliacoes + 1);
+    livro.qtdAvaliacoes += 1;
 
     // Atualizando status do livro
     livro.status = "disponivel";
@@ -169,6 +189,7 @@ exports.devolver = async (req, res) => {
       livro,
       pegador
     });
+
   } catch (error) {
     console.error("Erro devolver:", error);
     res.status(500).json({ erro: "Erro ao devolver livro" });

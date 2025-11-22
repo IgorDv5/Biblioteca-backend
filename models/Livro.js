@@ -1,4 +1,3 @@
-// models/Livro.js
 const mongoose = require('mongoose');
 
 const LivroSchema = new mongoose.Schema({
@@ -7,11 +6,13 @@ const LivroSchema = new mongoose.Schema({
   donoId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   status: { type: String, enum: ['disponivel','emprestado'], default: 'disponivel' },
   emprestadoPara: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  estrelas: { type: Number, min: 1, max: 5, default: 5 },
+  qtdAvaliacoes: { type: Number, default: 0 }, 
   dataEmprestimo: Date,
   dataDevolucaoPrevista: Date
 }, { timestamps: true });
 
-// Metodo Para formatacao de data
+// Método para formatar datas
 function formatarData(date) {
   if (!date) return null;
   const d = new Date(date);
