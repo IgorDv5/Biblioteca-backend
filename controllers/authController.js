@@ -1,7 +1,40 @@
 const User = require("../models/Usuario");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "";
+const JWT_SECRET = "Token"; 
+
+exports.registrar = async (req, res) => {
+  const { nome, email, senha } = req.body;
+  if (!nome || !email || !senha)
+    return res.status(400).json({ erro: "Nome, email e senha obrigatórios" });
+
+  try {
+    const existente = await User.findOne({ email });
+    if (existente)
+      return res.status(400).json({ erro: "Email já cadastrado" });
+
+    const novoUser = await User.create({ nome, email, senha });
+
+    // Gerar token
+    const token = jwt.sign({ id: novoUser._id }, JWT_SECRET, { expiresIn: "1h" });
+
+    res.status(201).json({
+      mensagem: "Usuário registrado com sucesso",
+      token,
+      user: {
+        id: novoUser._id,
+        nome: novoUser.nome,
+        email: novoUser.email,
+        pontos: novoUser.pontos,
+        reputacao: novoUser.reputacao
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: "Erro ao registrar usuário" });
+  }
+};
 
 
 exports.login = async (req, res) => {

@@ -21,6 +21,7 @@ app.use("/auth", authRoutes);
 
 
 
+
 // porta
 const PORT = 3000;
 app.listen(PORT, () => {

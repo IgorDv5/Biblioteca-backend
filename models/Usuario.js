@@ -9,12 +9,12 @@ const UserSchema = new mongoose.Schema({
   reputacao: { type: Number, default: 100 }
 }, { timestamps: true });
 
-UserSchema.pre("save", async function(next) {
-  if (!this.isModified("senha")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.senha = await bcrypt.hash(this.senha, salt);
-  next();
+UserSchema.pre("save", async function() {
+  if (this.isModified("senha")) {
+    this.senha = await bcrypt.hash(this.senha, 10);
+  }
 });
+
 
 UserSchema.methods.verificarSenha = async function(senhaDigitada) {
   return await bcrypt.compare(senhaDigitada, this.senha);
