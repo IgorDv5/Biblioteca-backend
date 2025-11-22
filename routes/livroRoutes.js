@@ -8,4 +8,7 @@ router.post("/", livroController.criar);
 router.put("/:id", livroController.atualizar);
 router.delete("/:id", livroController.deletar);
 
+router.post("/:id/emprestar", livroController.emprestar);
+router.post("/:id/devolver", livroController.devolver);
+
 module.exports = router;

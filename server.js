@@ -4,6 +4,7 @@ const conectarBanco = require("./config/database");
 const livroRoutes = require("./routes/livroRoutes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
 
+
 const app = express();
 
 app.use(express.json());
@@ -15,6 +16,7 @@ conectarBanco();
 // rotas
 app.use("/livros", livroRoutes);
 app.use("/usuarios", usuarioRoutes);
+
 
 
 // porta

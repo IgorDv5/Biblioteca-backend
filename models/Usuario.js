@@ -1,9 +1,31 @@
 const mongoose = require("mongoose");
 
-const usuarioSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  senha: { type: String, required: true }
+const UserSchema = new mongoose.Schema({
+  nome: String,
+  email: String,
+  senha: String,
+  pontos: Number,
+  reputacao: Number
+}, { timestamps: true });
+
+
+UserSchema.set("toJSON", {
+  transform: (_, obj) => {
+    delete obj.__v;
+    delete obj.createdAt;
+    delete obj.updatedAt;
+
+    return obj;
+  }
 });
 
-module.exports = mongoose.model("Usuario", usuarioSchema);
+UserSchema.set("toObject", {
+  transform: (_, obj) => {
+    delete obj.__v;
+    delete obj.createdAt;
+    delete obj.updatedAt;
+    return obj;
+  }
+});
+
+module.exports = mongoose.model("User", UserSchema);
