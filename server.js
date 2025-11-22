@@ -6,6 +6,7 @@ const usuarioRoutes = require("./routes/usuarioRoutes");
 
 
 const app = express();
+const authRoutes = require("./routes/authRoutes");
 
 app.use(express.json());
 app.use(cors());
@@ -16,6 +17,7 @@ conectarBanco();
 // rotas
 app.use("/livros", livroRoutes);
 app.use("/usuarios", usuarioRoutes);
+app.use("/auth", authRoutes);
 
 
 
