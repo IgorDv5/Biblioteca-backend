@@ -1,7 +1,7 @@
 const User = require("../models/Usuario");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "Token"; 
+const JWT_SECRET = "Token";
 
 exports.registrar = async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -13,7 +13,9 @@ exports.registrar = async (req, res) => {
     if (existente)
       return res.status(400).json({ erro: "Email já cadastrado" });
 
-    const novoUser = await User.create({ nome, email, senha });
+    const novoUser = new User({ nome, email, senha }); 
+    await novoUser.save(); 
+
 
     // Gerar token
     const token = jwt.sign({ id: novoUser._id }, JWT_SECRET, { expiresIn: "1h" });

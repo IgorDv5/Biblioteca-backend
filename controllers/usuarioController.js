@@ -33,10 +33,11 @@ exports.criar = async (req, res) => {
     const novo = await Usuario.create({
       nome,
       email,
-      senha: senhaHash,
-      pontos: 50,      
-      reputacao: 100  
+      senha, 
+      pontos: 50,
+      reputacao: 100
     });
+
 
     res.status(201).json({ mensagem: "Usuário criado", usuario: novo._id });
 
