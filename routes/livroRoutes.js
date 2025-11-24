@@ -10,5 +10,6 @@ router.delete("/:id", livroController.deletar);
 
 router.post("/:id/emprestar", livroController.emprestar);
 router.post("/:id/devolver", livroController.devolver);
+router.get("/emprestados/:usuarioId", livroController.getEmprestados);
 
 module.exports = router;

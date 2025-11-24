@@ -195,3 +195,17 @@ exports.devolver = async (req, res) => {
     res.status(500).json({ erro: "Erro ao devolver livro" });
   }
 };
+
+
+exports.getEmprestados = async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+    const livros = await Livro.find({ emprestadoPara: usuarioId });
+    res.json(livros);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: "Erro ao buscar livros emprestados" });
+  }
+};
+
+
