@@ -9,7 +9,12 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:4000", 
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
+
 
 // conectar banco
 conectarBanco();
