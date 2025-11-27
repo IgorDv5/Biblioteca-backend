@@ -27,17 +27,23 @@ exports.criar = async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
 
+    if (!nome || !email || !senha) {
+      return res.status(400).json({ erro: "Campos obrigatórios ausentes." });
+    }
+
+    if (nome.trim() === "" || email.trim() === "" || senha.trim() === "") {
+      return res.status(400).json({ erro: "Nenhum campo pode estar vazio." });
+    }
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
     const novo = await Usuario.create({
       nome,
       email,
-      senha, 
+      senha: senhaHash,
       pontos: 50,
       reputacao: 100
     });
-
 
     res.status(201).json({ mensagem: "Usuário criado", usuario: novo._id });
 
@@ -45,6 +51,7 @@ exports.criar = async (req, res) => {
     res.status(500).json({ erro: "Erro ao criar usuário" });
   }
 };
+
 
 
 exports.atualizar = async (req, res) => {
